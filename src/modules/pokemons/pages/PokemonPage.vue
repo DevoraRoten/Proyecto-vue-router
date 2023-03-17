@@ -1,6 +1,9 @@
 <template>
     <h1>Pokemon Page</h1>
     <h2>{{ id }}</h2>
+    <div v-if="pokemon">
+        <img :src="pokemon.sprites.front_default" :alt="pokemon.name">
+    </div>
 </template>
 
 <script>
@@ -36,6 +39,11 @@ export default {
                 this.$router.push('/')
             }
             
+        }
+    },
+    watch: {
+        id(){
+            this.getPokemon()
         }
     }
 }

@@ -5,17 +5,28 @@ import {createRouter, createWebHashHistory} from 'vue-router'
 import NoPageFound from '@/modules/shared/pages/NoPageFound'
 
 const routes = [
-    {
-         path: '/', 
+  {
+    path: '/',
+    redirect: '/pokemon'
+  },
+  {
+        path: '/pokemon', 
+        name: 'pokemon',
+        component: ()=> import(/*webpackChunkName: "Pokemon Layout"*/'@/modules/pokemons/layout/PokemonLayout'), 
+        children: [
+           {
+         path: 'home', 
+         name: 'pokemon-home',
          component: ()=> import(/*webpackChunkName: "List Name"*/'@/modules/pokemons/pages/ListPage') 
         },
     {
-         path: '/about', 
+         path: 'about', 
+         name:'pokemon-about',
          component: ()=> import(/*webpackChunkName: "AboutPage"*/'@/modules/pokemons/pages/AboutPage') 
         },
     {
-         path: '/:id', 
-        // name: 'poklemon-id',
+         path: ':id', 
+         name: 'pokemon-id',
          component: ()=> import(/*webpackChunkName: "PokeId"*/'@/modules/pokemons/pages/PokemonPage') ,
          props: (route) =>{
           console.log(route)
@@ -23,9 +34,43 @@ const routes = [
           return isNaN(id)? {id: 1}: {id} 
          }
         },
+        {
+          path: '',
+          redirect: {name: 'pokemon-about'}
+        }
+
+        ]
+       },
+
+       ///DBZ LAYOUT
+       {
+        path: '/dbz', 
+        name:'dbz',
+        component: ()=> import(/*webpackChunkName: "dbz-layout"*/'@/modules/dbz/layouts/DragonBallLayout'),
+        children: [
+          {
+            path: 'characters', 
+            name:'characters-dbz',
+            //component: ()=> import(/*webpackChunkName: "dbz-characters"*/'@/modules/dbz/pages/Characters')
+            component: ()=> import(/*webpackChunkName: "characters-dbz"*/'@/modules/dbz/pages/CharactersDbz') 
+           },
+           {
+            path: 'about', 
+            name:'about-dbz',
+            component: ()=> import(/*webpackChunkName: "about-dbz"*/'@/modules/dbz/pages/AboutDbz') 
+           },
+           {
+            path: '',
+            redirect: {name: 'characters-dbz'}
+           }
+        ] 
+       },
+
+   
     {
          path: '/:patchMatch(.*)*', 
          component: NoPageFound 
+         //redirect: '/'
         },
   ]
   
