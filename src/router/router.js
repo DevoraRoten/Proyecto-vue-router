@@ -3,6 +3,8 @@ import {createRouter, createWebHashHistory} from 'vue-router'
 //import AboutPage from '@/modules/pokemons/pages/AboutPage'
 //import PokemonPage from '@/modules/pokemons/pages/PokemonPage'
 import NoPageFound from '@/modules/shared/pages/NoPageFound'
+import isAuthenticatedGuard from './auth-guard'
+
 
 const routes = [
   {
@@ -46,6 +48,7 @@ const routes = [
        {
         path: '/dbz', 
         name:'dbz',
+        beforeEnter: [ isAuthenticatedGuard],
         component: ()=> import(/*webpackChunkName: "dbz-layout"*/'@/modules/dbz/layouts/DragonBallLayout'),
         children: [
           {
@@ -78,6 +81,41 @@ const routes = [
     // 4. Provide the history implementation to use. We are using the hash history for simplicity here.
     history: createWebHashHistory(),
     routes, // short for `routes: routes`
+  })
+  
+
+  const canAccess = () => {
+    return new Promise( (resolve) => {
+      const random= Math.random() * 100
+   
+      if( random > 50) {
+        console.log('Autenticado -canAcces')
+        resolve(true)
+      }else {
+        console.log(random, 'bloqueado po el beforeEach Guard -canAccess')
+        resolve(false)
+      }
+     
+        })
+  }
+  /*
+  const canAccess = () => {
+      const random= Math.random() * 100
+   
+      if( random > 50) {
+        console.log('Autenticado - canAcces')
+        return true
+      }else {
+        console.log(random, 'bloqueado po el beforeEach Guard - canAccess')
+        return false
+      }  
+  }*/
+
+  router.beforeEach(async(to, from, next)=> {
+    const authorized = await canAccess()
+      authorized 
+      ? next()
+      : next({name:'pokemon-home'})
   })
 
   export default router
